@@ -10,7 +10,7 @@ import frst.pro.service.LoginService;
 @RestController
 public class LoginController{
 	@PostMapping(value="/createLogin",consumes = "application/json")
-	public int createLogin(@RequestBody Loginbo loginbo) {
+	public boolean createLogin(@RequestBody Loginbo loginbo) {
 		return LoginService.createLogin(loginbo);	
 	}
 	

@@ -1,48 +1,45 @@
 package frst.pro.daoImpl;
 
+import java.util.List;
+import java.util.ListIterator;
+
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.service.ServiceRegistry;
-
+import org.hibernate.criterion.Restrictions;
 
 import frst.pro.bo.Loginbo;
 import frst.pro.dao.Logindao;
+import frst.pro.utils.DaoUtils;
 
 public class LogindaoImpl implements Logindao
 {
  
-	public  int createLogin(Loginbo loginbo) {
-		Configuration configuration = new Configuration().configure("hibernate.cfg.xml");
-        StandardServiceRegistryBuilder srb = new StandardServiceRegistryBuilder();
-        srb.applySettings(configuration.getProperties());
-        ServiceRegistry serviceRegistry = srb.build();
-        
-        //Create SessionFacctory
-        SessionFactory sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-        
-        //Create Session from SessionFactory
-        Session session = sessionFactory.openSession();
-        
-        //Begin the transaction
-        session.beginTransaction();
-        
-       
-        
-        //Persist the employee object
-        session.save(loginbo);
-        
-        //Commit the changes
-        session.getTransaction().commit();
-        //Close the session
-        session.close();
-    
-
-		return 1;
+	public  boolean createLogin(Loginbo loginbo) {
+		boolean ValidUser=false;
+		
+		SessionFactory sessionFactory= DaoUtils.daoConnection();
+		 Session session = sessionFactory.openSession();
+		session.beginTransaction();
+		Criteria criteria = session.createCriteria(Loginbo.class);
+		criteria.add(Restrictions.eq("email",loginbo.getEmail()));
+		criteria.add(Restrictions.eq("password",loginbo.getPassword()));
+		List results = criteria.list();
+		if(results.isEmpty()) {
+			ValidUser=false;
+			
+		}
+		else {
+			ValidUser=true;
+			
+		}
+			
+		
+		 session.close();
+		 return ValidUser;		
 		
 		
-	}
+			}
 
 
 
